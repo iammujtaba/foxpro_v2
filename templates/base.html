@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supreme Cycle - GST Solution</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { 
+            font-family: 'MS Sans Serif', sans-serif; 
+            background-color: #000080; 
+            color: #FFFFFF;
+            font-size: 14px;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .foxpro-menu-bar {
+            background-color: #C0C0C0;
+            color: #000000;
+            border-bottom: 1px solid #808080;
+            padding: 2px 0;
+            font-size: 20px;
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .menu-items {
+            display: flex;
+        }
+        
+        .digital-clock {
+            background-color: #FF00FF;
+            color: #FFD700;
+            padding: 4px 12px;
+            font-family: 'Courier New', monospace;
+            font-size: 18px;
+            font-weight: bold;
+            border: 1px solid #808080;
+            border-top-color: #FFFFFF;
+            border-left-color: #FFFFFF;
+            border-right-color: #404040;
+            border-bottom-color: #404040;
+            margin-right: 8px;
+        }
+        
+        .foxpro-menu-bar a {
+            color: #000000;
+            text-decoration: none;
+            padding: 2px 8px;
+            display: inline-block;
+            margin: 0;
+            position: relative;
+        }
+        
+        .foxpro-menu-bar a:hover {
+            background-color: #000080;
+            color: #FFFFFF;
+        }
+        
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #C0C0C0;
+            min-width: 200px;
+            box-shadow: 0px 2px 4px rgba(0,0,0,0.3);
+            z-index: 1000;
+            border: 1px solid #808080;
+            border-top: 1px solid #FFFFFF;
+            border-left: 1px solid #FFFFFF;
+            border-right: 1px solid #404040;
+            border-bottom: 1px solid #404040;
+        }
+        
+        .dropdown-content a {
+            color: #000000;
+            padding: 4px 12px;
+            text-decoration: none;
+            display: block;
+            font-size: 16px;
+        }
+        
+        .dropdown-content a:hover {
+            background-color: #000080;
+            color: #FFFFFF;
+        }
+        
+        .dropdown-submenu {
+            position: relative;
+        }
+        
+        .dropdown-submenu .dropdown-content {
+            top: 0;
+            left: 100%;
+        }
+        
+        .foxpro-code-window {
+            background-color: #008080;
+            color: #FFFFFF;
+            border: 2px solid;
+            border-top-color: #C0C0C0;
+            border-left-color: #C0C0C0;
+            border-right-color: #404040;
+            border-bottom-color: #404040;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            padding: 8px;
+        }
+        
+        .foxpro-dialog {
+            background-color: #008080;
+            color: #FFFFFF;
+            border: 2px solid;
+            border-top-color: #FFFFFF;
+            border-left-color: #FFFFFF;
+            border-right-color: #808080;
+            border-bottom-color: #808080;
+            font-size: 13px;
+        }
+        
+        .foxpro-dialog-title {
+            background-color: #008080;
+            color: #FFFFFF;
+            text-align: center;
+            font-weight: bold;
+            padding: 12px;
+            font-size: 20px;
+        }
+        
+        .foxpro-button {
+            background-color: #C0C0C0;
+            color: #000000;
+            border: 1px solid;
+            border-top-color: #FFFFFF;
+            border-left-color: #FFFFFF;
+            border-right-color: #808080;
+            border-bottom-color: #808080;
+            padding: 12px 32px;
+            font-family: 'MS Sans Serif', sans-serif;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        
+        .foxpro-button:hover {
+            background-color: #A0A0A0;
+        }
+        
+        .foxpro-button:active {
+            border-top-color: #808080;
+            border-left-color: #808080;
+            border-right-color: #FFFFFF;
+            border-bottom-color: #FFFFFF;
+        }
+        
+        .foxpro-input {
+            background-color: #FFFFFF;
+            color: #000000;
+            border: 1px solid;
+            border-top-color: #808080;
+            border-left-color: #808080;
+            border-right-color: #C0C0C0;
+            border-bottom-color: #C0C0C0;
+            padding: 8px 12px;
+            font-family: 'MS Sans Serif', sans-serif;
+            font-size: 18px;
+        }
+        
+        .foxpro-label {
+            color: #FFFFFF;
+            font-family: 'MS Sans Serif', sans-serif;
+            font-size: 18px;
+        }
+        
+        .status-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: #C0C0C0;
+            color: #000000;
+            padding: 2px 4px;
+            font-size: 11px;
+            border-top: 1px solid #808080;
+            font-family: 'MS Sans Serif', sans-serif;
+        }
+        
+        .menu-highlight {
+            background-color: #000080 !important;
+            color: #FFFFFF !important;
+        }
+        
+        .form-focus {
+            outline: 2px solid #FFD700;
+            outline-offset: 2px;
+        }
+        
+        .access-key {
+            text-decoration: underline;
+            text-decoration-color: #000000;
+            text-decoration-thickness: 1px;
+        }
+    </style>
+</head>
+<body>
+    <!-- FoxPro Style Menu Bar -->
+    <div class="foxpro-menu-bar">
+        <div class="menu-items">
+            <div class="dropdown">
+                <a href="#">Inventory</a>
+                <div class="dropdown-content">
+                    <a href="{% url 'add_hsn' %}">Add HSN</a>
+                    <a href="#">Edit HSN</a>
+                    <a href="{% url 'add_item' %}">Add Item</a>
+                    <a href="#">Edit Item</a>
+                </div>
+            </div>
+            
+            <div class="dropdown">
+                <a href="#">Sales</a>
+                <div class="dropdown-content">
+                    <a href="#">New Sales</a>
+                    <a href="#">New Sales Return</a>
+                </div>
+            </div>
+            
+            <div class="dropdown">
+                <a href="#">Purchase</a>
+                <div class="dropdown-content">
+                    <a href="#">New Purchase</a>
+                    <a href="#">New Purchase Return</a>
+                </div>
+            </div>
+            
+            <div class="dropdown">
+                <a href="#">Accounts</a>
+                <div class="dropdown-content">
+                    <div class="dropdown-submenu">
+                        <a href="#">Customer</a>
+                        <div class="dropdown-content">
+                            <a href="#">Add New Customer</a>
+                            <a href="#">Edit Customer</a>
+                            <a href="#">Customer Statement</a>
+                        </div>
+                    </div>
+                    <div class="dropdown-submenu">
+                        <a href="#">Party</a>
+                        <div class="dropdown-content">
+                            <a href="#">Add New Party</a>
+                            <a href="#">Edit Party</a>
+                            <a href="#">Party Statement</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="dropdown">
+                <a href="#">Reports</a>
+                <div class="dropdown-content">
+                    <a href="#">Cashbook</a>
+                    <a href="#">Daybook</a>
+                    <a href="{% url 'current_stock' %}">Current Stock</a>
+                    <a href="#">Sales Accountwise</a>
+                    <a href="#">Purchase Accountwise</a>
+                    <a href="#">GST Collection</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="digital-clock" id="digitalClock">00:00:00</div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div style="padding: 20px; position: relative; min-height: calc(100vh - 40px);">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <!-- Status Bar -->
+    <div class="status-bar">
+        Supreme Cycle Management System | Rec: EOF/BOF | F1-Help F2-Assist F9-Zoom F10-Menu | Ctrl+O-OK Ctrl+C-Cancel
+    </div>
+
+    <script>
+        let menuFocused = false;
+        let currentMenuIndex = 0;
+        let formFocused = false;
+        let dropdownOpen = false;
+        let currentDropdownIndex = 0;
+        let submenuOpen = false;
+        let currentSubmenuIndex = 0;
+        
+        function updateClock() {
+            const now = new Date();
+            let hours = now.getHours();
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            
+            // Convert to 12-hour format
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12; // the hour '0' should be '12'
+            const hoursStr = String(hours).padStart(2, '0');
+            
+            const timeString = `${hoursStr}:${minutes}:${seconds} ${ampm}`;
+            document.getElementById('digitalClock').textContent = timeString;
+        }
+
+        // Update clock immediately
+        updateClock();
+        
+        // Update clock every second
+        setInterval(updateClock, 1000);
+        
+        // Keyboard navigation functions
+        function highlightMenu(index) {
+            const menus = document.querySelectorAll('.dropdown > a');
+            menus.forEach((menu, i) => {
+                if (i === index) {
+                    menu.classList.add('menu-highlight');
+                } else {
+                    menu.classList.remove('menu-highlight');
+                }
+            });
+        }
+        
+        function clearMenuHighlight() {
+            const menus = document.querySelectorAll('.dropdown > a');
+            menus.forEach(menu => menu.classList.remove('menu-highlight'));
+        }
+        
+        function closeAllDropdowns() {
+            const dropdowns = document.querySelectorAll('.dropdown-content');
+            dropdowns.forEach(dropdown => {
+                dropdown.style.display = 'none';
+            });
+            dropdownOpen = false;
+            submenuOpen = false;
+        }
+        
+        function closeSubmenus() {
+            const submenus = document.querySelectorAll('.dropdown-submenu .dropdown-content');
+            submenus.forEach(submenu => {
+                submenu.style.display = 'none';
+            });
+            submenuOpen = false;
+        }
+        
+        function openDropdown(index) {
+            closeAllDropdowns();
+            const menus = document.querySelectorAll('.dropdown');
+            if (menus[index]) {
+                const dropdownContent = menus[index].querySelector('.dropdown-content');
+                if (dropdownContent) {
+                    dropdownContent.style.display = 'block';
+                    dropdownOpen = true;
+                    currentDropdownIndex = 0;
+                    // Small delay to prevent any interference
+                    setTimeout(() => {
+                        highlightDropdownItem(0);
+                    }, 50);
+                }
+            }
+        }
+        
+        function openSubmenu(parentIndex, submenuIndex) {
+            const menus = document.querySelectorAll('.dropdown');
+            const currentDropdown = menus[currentMenuIndex];
+            if (currentDropdown) {
+                const submenuItems = currentDropdown.querySelectorAll('.dropdown-submenu');
+                if (submenuItems[submenuIndex]) {
+                    const submenuContent = submenuItems[submenuIndex].querySelector('.dropdown-content');
+                    if (submenuContent) {
+                        submenuContent.style.display = 'block';
+                    }
+                }
+            }
+        }
+        
+        function highlightDropdownItem(index) {
+            const menus = document.querySelectorAll('.dropdown');
+            const currentDropdown = menus[currentMenuIndex];
+            if (currentDropdown) {
+                // For Accounts menu, only get the submenu parent items (Customer, Party)
+                if (currentMenuIndex === 3) { // Accounts menu index
+                    const submenuParents = currentDropdown.querySelectorAll('.dropdown-submenu > a');
+                    submenuParents.forEach((item, i) => {
+                        item.classList.remove('menu-highlight');
+                        if (i === index) {
+                            item.classList.add('menu-highlight');
+                        }
+                    });
+                } else {
+                    // For other menus, get direct dropdown items
+                    const dropdownItems = currentDropdown.querySelectorAll('.dropdown-content > a');
+                    dropdownItems.forEach((item, i) => {
+                        item.classList.remove('menu-highlight');
+                        if (i === index) {
+                            item.classList.add('menu-highlight');
+                        }
+                    });
+                }
+            }
+        }
+        
+        function highlightSubmenuItem(index) {
+            const menus = document.querySelectorAll('.dropdown');
+            const currentDropdown = menus[currentMenuIndex];
+            if (currentDropdown) {
+                const submenuItems = currentDropdown.querySelectorAll('.dropdown-submenu');
+                if (submenuItems[currentDropdownIndex]) {
+                    const submenuContent = submenuItems[currentDropdownIndex].querySelector('.dropdown-content');
+                    if (submenuContent) {
+                        const submenuLinks = submenuContent.querySelectorAll('a');
+                        submenuLinks.forEach((item, i) => {
+                            item.classList.remove('menu-highlight');
+                            if (i === index) {
+                                item.classList.add('menu-highlight');
+                            }
+                        });
+                    }
+                }
+            }
+        }
+        
+        function clearDropdownHighlight() {
+            const dropdownItems = document.querySelectorAll('.dropdown-content a');
+            dropdownItems.forEach(item => item.classList.remove('menu-highlight'));
+        }
+        
+        function focusFirstFormElement() {
+            const formElements = document.querySelectorAll('input, select, button, textarea');
+            if (formElements.length > 0) {
+                formElements[0].focus();
+                formElements[0].classList.add('form-focus');
+                formFocused = true;
+            }
+        }
+        
+        function handleAccessKey(key) {
+            // Look for elements with access keys (data-access-key attribute or button text containing the key)
+            const accessKeyElements = document.querySelectorAll(`[data-access-key="${key}"], button, input[type="submit"], input[type="button"]`);
+            
+            for (let element of accessKeyElements) {
+                // Check if element has data-access-key attribute
+                if (element.getAttribute('data-access-key') === key) {
+                    element.focus();
+                    element.classList.add('form-focus');
+                    return true;
+                }
+                
+                // Check if button text contains the access key (case insensitive)
+                if (element.tagName === 'BUTTON' || element.type === 'submit' || element.type === 'button') {
+                    const text = element.textContent || element.value || '';
+                    if (text.toLowerCase().includes(key.toLowerCase())) {
+                        element.focus();
+                        element.classList.add('form-focus');
+                        return true;
+                    }
+                }
+            }
+            
+            return false;
+        }
+        
+        // Main keyboard event handler
+        document.addEventListener('keydown', function(e) {
+            // Prevent any default behavior for navigation keys when in menu mode
+            if (menuFocused && (e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'ArrowUp' || e.key === 'ArrowDown' || e.key === 'Enter')) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            
+            // Disable common browser shortcuts
+            if (e.ctrlKey || e.metaKey) {
+                switch(e.key) {
+                    case 'w': // Close tab
+                    case 'W':
+                    case 't': // New tab
+                    case 'T':
+                    case 'r': // Refresh
+                    case 'R':
+                    case 'n': // New window
+                    case 'N':
+                    case 'l': // Address bar
+                    case 'L':
+                    case 'f': // Find
+                    case 'F':
+                    case 'g': // Find next
+                    case 'G':
+                    case 'h': // History
+                    case 'H':
+                    case 'j': // Downloads
+                    case 'J':
+                    case 'k': // Search
+                    case 'K':
+                    case 'd': // Bookmark
+                    case 'D':
+                    case 'u': // View source
+                    case 'U':
+                    case 's': // Save
+                    case 'S':
+                    case 'p': // Print
+                    case 'P':
+                    // Note: Removed 'o' and 'O' to allow CTRL+O for access keys
+                    // Note: Removed 'c' and 'C' to allow CTRL+C for access keys (only block copy if needed)
+                        e.preventDefault();
+                        e.stopPropagation();
+                        return false;
+                }
+            }
+            
+            // Disable F5 refresh
+            if (e.key === 'F5') {
+                e.preventDefault();
+                e.stopPropagation();
+                return false;
+            }
+            
+            // Disable browser navigation
+            if (e.altKey && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
+                e.preventDefault();
+                e.stopPropagation();
+                return false;
+            }
+            
+            // Custom ALT key navigation
+            if (e.key === 'Alt') {
+                e.preventDefault();
+                if (!menuFocused && !formFocused) {
+                    // First ALT press - focus on menu
+                    menuFocused = true;
+                    currentMenuIndex = 0;
+                    highlightMenu(currentMenuIndex);
+                } else if (menuFocused) {
+                    // Second ALT press - focus on form
+                    menuFocused = false;
+                    clearMenuHighlight();
+                    focusFirstFormElement();
+                } else if (formFocused) {
+                    // Third ALT press - back to menu
+                    formFocused = false;
+                    document.querySelectorAll('.form-focus').forEach(el => el.classList.remove('form-focus'));
+                    menuFocused = true;
+                    currentMenuIndex = 0;
+                    highlightMenu(currentMenuIndex);
+                }
+                return false;
+            }
+            
+            // Handle ALT + letter combinations for access keys
+            if (e.altKey && !e.ctrlKey && !e.metaKey && e.key.length === 1) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Try to find and focus element with matching access key
+                if (handleAccessKey(e.key)) {
+                    formFocused = true;
+                    menuFocused = false;
+                    clearMenuHighlight();
+                    closeAllDropdowns();
+                }
+                return false;
+            }
+            
+            // Handle CTRL + letter combinations for access keys (O, C, P, R)
+            if (e.ctrlKey && !e.altKey && !e.metaKey && ['o', 'c', 'p', 'r'].includes(e.key.toLowerCase())) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Try to find and focus element with matching access key
+                if (handleAccessKey(e.key.toLowerCase())) {
+                    formFocused = true;
+                    menuFocused = false;
+                    clearMenuHighlight();
+                    closeAllDropdowns();
+                }
+                return false;
+            }
+            
+            // Menu navigation with arrow keys
+            if (menuFocused && !dropdownOpen) {
+                const menus = document.querySelectorAll('.dropdown > a');
+                
+                if (e.key === 'ArrowLeft') {
+                    e.preventDefault();
+                    closeAllDropdowns();
+                    currentMenuIndex = (currentMenuIndex - 1 + menus.length) % menus.length;
+                    highlightMenu(currentMenuIndex);
+                } else if (e.key === 'ArrowRight') {
+                    e.preventDefault();
+                    closeAllDropdowns();
+                    currentMenuIndex = (currentMenuIndex + 1) % menus.length;
+                    highlightMenu(currentMenuIndex);
+                } else if (e.key === 'Enter' || e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    openDropdown(currentMenuIndex);
+                    return false;
+                } else if (e.key === 'Escape') {
+                    e.preventDefault();
+                    menuFocused = false;
+                    clearMenuHighlight();
+                    closeAllDropdowns();
+                }
+            }
+            
+            // Dropdown navigation with arrow keys
+            if (menuFocused && dropdownOpen && !submenuOpen) {
+                const menus = document.querySelectorAll('.dropdown');
+                const currentDropdown = menus[currentMenuIndex];
+                if (currentDropdown) {
+                    let dropdownItems;
+                    // For Accounts menu, only navigate between submenu parents (Customer, Party)
+                    if (currentMenuIndex === 3) { // Accounts menu index
+                        dropdownItems = currentDropdown.querySelectorAll('.dropdown-submenu > a');
+                    } else {
+                        // For other menus, get direct dropdown items
+                        dropdownItems = currentDropdown.querySelectorAll('.dropdown-content > a');
+                    }
+                    
+                    if (e.key === 'ArrowUp') {
+                        e.preventDefault();
+                        closeSubmenus();
+                        currentDropdownIndex = (currentDropdownIndex - 1 + dropdownItems.length) % dropdownItems.length;
+                        highlightDropdownItem(currentDropdownIndex);
+                    } else if (e.key === 'ArrowDown') {
+                        e.preventDefault();
+                        closeSubmenus();
+                        currentDropdownIndex = (currentDropdownIndex + 1) % dropdownItems.length;
+                        highlightDropdownItem(currentDropdownIndex);
+                    } else if (e.key === 'ArrowLeft') {
+                        e.preventDefault();
+                        closeAllDropdowns();
+                        currentMenuIndex = (currentMenuIndex - 1 + menus.length) % menus.length;
+                        highlightMenu(currentMenuIndex);
+                    } else if (e.key === 'ArrowRight') {
+                        e.preventDefault();
+                        // Check if current item is a submenu (for Accounts menu)
+                        if (currentMenuIndex === 3) { // Accounts menu
+                            // Always enter submenu mode for Accounts items
+                            const submenuItems = currentDropdown.querySelectorAll('.dropdown-submenu');
+                            if (submenuItems[currentDropdownIndex]) {
+                                const submenuContent = submenuItems[currentDropdownIndex].querySelector('.dropdown-content');
+                                if (submenuContent) {
+                                    submenuContent.style.display = 'block';
+                                    submenuOpen = true;
+                                    currentSubmenuIndex = 0;
+                                    highlightSubmenuItem(0);
+                                }
+                            }
+                        } else {
+                            // For other menus, move to next main menu
+                            closeAllDropdowns();
+                            currentMenuIndex = (currentMenuIndex + 1) % menus.length;
+                            highlightMenu(currentMenuIndex);
+                        }
+                    } else if (e.key === 'Enter') {
+                        e.preventDefault();
+                        // Check if current menu is Accounts
+                        if (currentMenuIndex === 3) { // Accounts menu
+                            // Always enter submenu mode for Accounts items
+                            const submenuItems = currentDropdown.querySelectorAll('.dropdown-submenu');
+                            if (submenuItems[currentDropdownIndex]) {
+                                const submenuContent = submenuItems[currentDropdownIndex].querySelector('.dropdown-content');
+                                if (submenuContent) {
+                                    submenuContent.style.display = 'block';
+                                    submenuOpen = true;
+                                    currentSubmenuIndex = 0;
+                                    highlightSubmenuItem(0);
+                                }
+                            }
+                        } else {
+                            // For other menus, click the highlighted dropdown item
+                            if (dropdownItems[currentDropdownIndex] && dropdownItems[currentDropdownIndex].getAttribute('href') !== '#') {
+                                dropdownItems[currentDropdownIndex].click();
+                            }
+                        }
+                    } else if (e.key === 'Escape') {
+                        e.preventDefault();
+                        closeAllDropdowns();
+                        // Stay in menu mode but close dropdown
+                    }
+                }
+            }
+            
+            // Submenu navigation with arrow keys
+            if (menuFocused && dropdownOpen && submenuOpen) {
+                const menus = document.querySelectorAll('.dropdown');
+                const currentDropdown = menus[currentMenuIndex];
+                if (currentDropdown) {
+                    const submenuItems = currentDropdown.querySelectorAll('.dropdown-submenu');
+                    if (submenuItems[currentDropdownIndex]) {
+                        const submenuContent = submenuItems[currentDropdownIndex].querySelector('.dropdown-content');
+                        if (submenuContent) {
+                            const submenuLinks = submenuContent.querySelectorAll('a');
+                            
+                            if (e.key === 'ArrowUp') {
+                                e.preventDefault();
+                                currentSubmenuIndex = (currentSubmenuIndex - 1 + submenuLinks.length) % submenuLinks.length;
+                                highlightSubmenuItem(currentSubmenuIndex);
+                            } else if (e.key === 'ArrowDown') {
+                                e.preventDefault();
+                                currentSubmenuIndex = (currentSubmenuIndex + 1) % submenuLinks.length;
+                                highlightSubmenuItem(currentSubmenuIndex);
+                            } else if (e.key === 'ArrowLeft') {
+                                e.preventDefault();
+                                // Go back to parent dropdown
+                                closeSubmenus();
+                                highlightDropdownItem(currentDropdownIndex);
+                            } else if (e.key === 'ArrowRight') {
+                                e.preventDefault();
+                                // Move to next main menu
+                                closeAllDropdowns();
+                                currentMenuIndex = (currentMenuIndex + 1) % menus.length;
+                                highlightMenu(currentMenuIndex);
+                            } else if (e.key === 'Enter') {
+                                e.preventDefault();
+                                // Click the highlighted submenu item
+                                if (submenuLinks[currentSubmenuIndex] && submenuLinks[currentSubmenuIndex].getAttribute('href') !== '#') {
+                                    submenuLinks[currentSubmenuIndex].click();
+                                }
+                            } else if (e.key === 'Escape') {
+                                e.preventDefault();
+                                // Go back to parent dropdown
+                                closeSubmenus();
+                                highlightDropdownItem(currentDropdownIndex);
+                            }
+                        }
+                    }
+                }
+            }
+            
+            // ESC key to clear all focus
+            if (e.key === 'Escape') {
+                if (submenuOpen) {
+                    // If submenu is open, close it and go back to parent dropdown
+                    closeSubmenus();
+                    highlightDropdownItem(currentDropdownIndex);
+                } else if (dropdownOpen) {
+                    // If dropdown is open, just close it but stay in menu mode
+                    closeAllDropdowns();
+                    clearDropdownHighlight();
+                } else {
+                    // If no dropdown is open, exit menu mode completely
+                    menuFocused = false;
+                    formFocused = false;
+                    clearMenuHighlight();
+                    clearDropdownHighlight();
+                    closeAllDropdowns();
+                    document.querySelectorAll('.form-focus').forEach(el => el.classList.remove('form-focus'));
+                    document.activeElement.blur();
+                }
+            }
+        });
+        
+        // Handle clicks to clear menu focus
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.foxpro-menu-bar')) {
+                menuFocused = false;
+                clearMenuHighlight();
+                clearDropdownHighlight();
+                closeAllDropdowns();
+            }
+        });
+        
+        // Prevent context menu (right-click)
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            return false;
+        });
+        
+        // Disable F12 developer tools
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'F12') {
+                e.preventDefault();
+                return false;
+            }
+        });
+        
+        // Disable Ctrl+Shift+I (developer tools)
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.shiftKey && e.key === 'I') {
+                e.preventDefault();
+                return false;
+            }
+        });
+        
+        // Show status message for disabled shortcuts
+        function showStatusMessage(message) {
+            const statusBar = document.querySelector('.status-bar');
+            const originalText = statusBar.textContent;
+            statusBar.textContent = message;
+            setTimeout(() => {
+                statusBar.textContent = originalText;
+            }, 2000);
+        }
+        
+        // Focus management for form elements
+        document.addEventListener('focus', function(e) {
+            if (e.target.matches('input, select, button, textarea')) {
+                document.querySelectorAll('.form-focus').forEach(el => el.classList.remove('form-focus'));
+                e.target.classList.add('form-focus');
+            }
+        }, true);
+    </script>
+</body>
+</html>

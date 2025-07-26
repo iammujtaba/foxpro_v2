@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="foxpro-dialog" style="width: 95%; margin: 20px auto; max-width: 1200px;">
+  <div class="foxpro-dialog-title">Current Stock Report</div>
+  <div style="padding: 20px;">
+    
+    {% if items %}
+    <!-- Stock Table -->
+    <div style="overflow-x: auto; margin-bottom: 20px;">
+      <table style="width: 100%; border-collapse: collapse; background-color: #008080; color: #FFFFFF;">
+        <thead>
+          <tr style="background-color: #006060; border-bottom: 2px solid #004040;">
+            <th style="padding: 8px; border: 1px solid #004040; text-align: left; font-size: 16px;">Sr.</th>
+            <th style="padding: 8px; border: 1px solid #004040; text-align: left; font-size: 16px;">Item Name</th>
+            <th style="padding: 8px; border: 1px solid #004040; text-align: left; font-size: 16px;">Category</th>
+            <th style="padding: 8px; border: 1px solid #004040; text-align: center; font-size: 16px;">HSN Code</th>
+            <th style="padding: 8px; border: 1px solid #004040; text-align: center; font-size: 16px;">GST %</th>
+            <th style="padding: 8px; border: 1px solid #004040; text-align: right; font-size: 16px;">Opening Qty</th>
+            <th style="padding: 8px; border: 1px solid #004040; text-align: right; font-size: 16px;">Current Qty</th>
+            <th style="padding: 8px; border: 1px solid #004040; text-align: right; font-size: 16px;">Purchase Rate</th>
+            <th style="padding: 8px; border: 1px solid #004040; text-align: right; font-size: 16px;">Bill Rate</th>
+            <th style="padding: 8px; border: 1px solid #004040; text-align: right; font-size: 16px;">Stock Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in items %}
+          <tr style="border-bottom: 1px solid #004040;">
+            <td style="padding: 6px 8px; border: 1px solid #004040; font-size: 14px;">{{ forloop.counter }}</td>
+            <td style="padding: 6px 8px; border: 1px solid #004040; font-size: 14px; font-weight: bold;">{{ item.name }}</td>
+            <td style="padding: 6px 8px; border: 1px solid #004040; font-size: 14px;">{{ item.category|default:"-" }}</td>
+            <td style="padding: 6px 8px; border: 1px solid #004040; text-align: center; font-size: 14px;">
+              {% if item.hsn_code %}{{ item.hsn_code.code }}{% else %}-{% endif %}
+            </td>
+            <td style="padding: 6px 8px; border: 1px solid #004040; text-align: center; font-size: 14px;">
+              {% if item.hsn_code %}{{ item.hsn_code.gst_percentage }}%{% else %}-{% endif %}
+            </td>
+            <td style="padding: 6px 8px; border: 1px solid #004040; text-align: right; font-size: 14px;">{{ item.quantity }}</td>
+            <td style="padding: 6px 8px; border: 1px solid #004040; text-align: right; font-size: 14px;">
+              {% if item.current_quantity <= 5 %}
+                <span style="color: #FFD700; font-weight: bold;">{{ item.current_quantity }}</span>
+                <span style="color: #FF6666;"> (Low Stock!)</span>
+              {% else %}
+                <span style="color: #FFFFFF;">{{ item.current_quantity }}</span>
+              {% endif %}
+            </td>
+            <td style="padding: 6px 8px; border: 1px solid #004040; text-align: right; font-size: 14px;">₹{{ item.purchase_rate|floatformat:2 }}</td>
+            <td style="padding: 6px 8px; border: 1px solid #004040; text-align: right; font-size: 14px;">₹{{ item.bill_rate|floatformat:2 }}</td>
+            <td style="padding: 6px 8px; border: 1px solid #004040; text-align: right; font-size: 14px; font-weight: bold;">₹{{ item.stock_value|floatformat:2 }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+        <tfoot>
+          <tr style="background-color: #004040; font-weight: bold; border-top: 2px solid #002020;">
+            <td colspan="9" style="padding: 8px; border: 1px solid #004040; text-align: right; font-size: 16px;">Total Stock Value:</td>
+            <td style="padding: 8px; border: 1px solid #004040; text-align: right; font-size: 16px; color: #FFD700;">₹{{ total_value|floatformat:2 }}</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <!-- Summary Statistics -->
+    <div style="display: flex; justify-content: space-between; margin-top: 30px;">
+      <div style="background-color: #006060; padding: 15px; border: 1px solid #004040; border-radius: 4px; min-width: 200px;">
+        <div class="foxpro-label" style="font-size: 14px; margin-bottom: 5px;">Total Items:</div>
+        <div style="font-size: 20px; font-weight: bold; color: #FFD700;">{{ items.count }}</div>
+      </div>
+      
+      <div style="background-color: #006060; padding: 15px; border: 1px solid #004040; border-radius: 4px; min-width: 200px;">
+        <div class="foxpro-label" style="font-size: 14px; margin-bottom: 5px;">Low Stock Items:</div>
+        <div style="font-size: 20px; font-weight: bold; color: #FF6666;">
+          {{ low_stock_count|default:"0" }}
+        </div>
+      </div>
+      
+      <div style="background-color: #006060; padding: 15px; border: 1px solid #004040; border-radius: 4px; min-width: 250px;">
+        <div class="foxpro-label" style="font-size: 14px; margin-bottom: 5px;">Total Stock Value:</div>
+        <div style="font-size: 20px; font-weight: bold; color: #00FF00;">₹{{ total_value|floatformat:2 }}</div>
+      </div>
+    </div>
+
+    {% else %}
+    <!-- No Items Message -->
+    <div style="text-align: center; padding: 60px;">
+      <div style="font-size: 24px; color: #FFD700; margin-bottom: 20px;">📦</div>
+      <div class="foxpro-label" style="font-size: 20px; margin-bottom: 10px;">No Items in Stock</div>
+      <div style="font-size: 16px; color: #C0C0C0;">Add some items to see the current stock report</div>
+    </div>
+    {% endif %}
+
+    <!-- Action Buttons -->
+    <div style="text-align: center; padding-top: 30px; border-top: 2px solid #004040; margin-top: 30px;">
+      <button type="button" class="foxpro-button" data-access-key="p" onclick="window.print()" style="margin-right: 20px;">
+        <span class="access-key">P</span>rint Report
+      </button>
+      <button type="button" class="foxpro-button" data-access-key="r" onclick="window.location.reload()">
+        <span class="access-key">R</span>efresh
+      </button>
+      <button type="button" class="foxpro-button" data-access-key="c" onclick="window.history.back()" style="margin-left: 20px;">
+        <span class="access-key">C</span>lose
+      </button>
+    </div>
+  </div>
+</div>
+
+<style>
+/* Print Styles */
+@media print {
+  .foxpro-menu-bar, .status-bar {
+    display: none;
+  }
+  
+  .foxpro-dialog {
+    width: 100% !important;
+    margin: 0 !important;
+    max-width: none !important;
+  }
+  
+  table {
+    font-size: 12px !important;
+  }
+  
+  th, td {
+    padding: 4px !important;
+  }
+}
+</style>
+{% endblock %}
